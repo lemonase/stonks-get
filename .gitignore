@@ -137,5 +137,5 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-con_session.sqlite
+con_session.sql
 wsb_tags.db
