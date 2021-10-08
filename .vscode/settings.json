@@ -1,0 +1,11 @@
+{
+  "python.formatting.provider": "yapf",
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "con",
+      "database": "${workspaceFolder:stonks-get}/wsb_tags.db"
+    }
+  ]
+}
