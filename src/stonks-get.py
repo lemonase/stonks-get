@@ -1,3 +1,4 @@
+import argparse
 import os
 import praw
 import datetime as dt
@@ -98,16 +99,43 @@ def add_subs_to_db(con, cur, subs):
                     con.rollback()
 
 
+def print_table(con, cur, table, pretty=False):
+    if pretty:
+        import pandas as pd
+        print(pd.read_sql_query(f"SELECT * FROM {table}", con))
+    else:
+        for row in cur.execute(f"SELECT * FROM {table}"):
+            print(row)
+
+
+def get_args():
+    parser = argparse.ArgumentParser(description="stonks-get.py")
+    parser.add_argument("--fetch", action=argparse.BooleanOptionalAction)
+    parser.add_argument("--limit", type=int, default=100)
+    parser.add_argument("--print", action=argparse.BooleanOptionalAction)
+    parser.add_argument("--pprint", action=argparse.BooleanOptionalAction)
+
+    return parser.parse_args()
+
+
 def main():
     """ Main function """
+
+    args = get_args()
 
     # get connection and cursor for db
     con, cur = create_db()
 
     # returns submissions from a subreddit
-    subs = get_subs_list("wallstreetbets", 100)
+    if args.fetch:
+        subs = get_subs_list("wallstreetbets", args.limit)
+        add_subs_to_db(con, cur, subs)
+        con.commit()
+    if args.print:
+        print_table(con, cur, "stocks")
+    if args.pprint:
+        print_table(con, cur, "stocks", pretty=True)
 
-    add_subs_to_db(con, cur, subs)
     con.close()
 
 
